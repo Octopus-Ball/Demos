@@ -1,0 +1,13 @@
+{
+    "sqltools.connections": [
+        {
+            "database": "go_test",
+            "dialect": "MySQL",
+            "name": "db",
+            "password": "123456",
+            "port": 3306,
+            "server": "zy.server",
+            "username": "root"
+        }
+    ]
+}

@@ -283,11 +283,21 @@ func cookieAndSession(r *gin.Engine) {
 		cookie, err := c.Cookie("key_cookie")
 		if err != nil {
 			// 给客户端设置cookie
-			c.SetCookie("key_cookie", "value_cookie", 60, "/", )
+			c.SetCookie(
+				"key_cookie",
+				"value_cookie",
+				10,          // cookie有效时间
+				"/",         // cookie所在目录
+				"127.0.0.1", // 域名
+				false,       // 是否只能通过https访问
+				true,        // 是否允许别人通过js获取自己cookie
+			)
+			c.String(200, "无cookie，设置cookie")
+		} else {
+			c.String(200, "cookie为: %s", cookie)
 		}
 	})
 }
-
 
 func main() {
 	r := initGin()
