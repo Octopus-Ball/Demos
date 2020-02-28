@@ -6,6 +6,7 @@ package main
 
 import (
 	"fmt"
+
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jinzhu/gorm"
 )
@@ -48,17 +49,17 @@ type User struct {
 // 默认生成的数据库表的名字为模型名的复数形式,驼峰命名将被该为下划线
 // 也可为该模型绑定TableName方法来设定数据库表的名字
 func (User) TableName() string {
-	return "my_users"
+	return "users1"
 }
 
 // **********************************************************
 
-// 连接数据库
+// 连接数据库(Open)
 // **********************************************************
 var DB *gorm.DB
 
 func initDB(user, passworld, addr, port, dbname string) {
-	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", user, passworld, addr, port, dbname)
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8&parseTime=true", user, passworld, addr, port, dbname)
 	var err error
 	DB, err = gorm.Open("mysql", dsn)
 	if err != nil {
@@ -68,59 +69,69 @@ func initDB(user, passworld, addr, port, dbname string) {
 
 // **********************************************************
 
-// 创建表
+// 迁移表(AutoMigrate)
 // **********************************************************
 func creatTable() {
-	DB.SingularTable(true)  // 禁用默认的让表名为模型名的复数形式(需要在AutoMigrate之前)
-	DB.AutoMigrate(&User{}) // 创建表并自动迁移
-
-	// u1 := UserInfo{ID: 1, Name: "aa", Gender: "man", Hobby: "run"}
-	// DB.Create(u1)	// 插入数据
+	DB.SingularTable(true) // 禁用默认的让表名为模型名的复数形式(需要在AutoMigrate之前)
+	// 检查结构体是否变化，若变化则自动进行迁移
+	DB.AutoMigrate(&User{})
 }
 
 // **********************************************************
 
-// 插入数据
+// 插入数据(Create)
 // **********************************************************
 func insert(name string, age int64) {
 	u := User{Name: name, Age: age} // 实例化一个User结构体
 	if DB.NewRecord(&u) {           // 判断是否为新数据(即数据库是否已经存有该数据)，若还无该数据，则返回True
 		DB.Create(&u) // 在数据库里存储一条记录
 		fmt.Println("存入数据")
+	} else {
+		fmt.Println("数据已存在")
 	}
-
 }
 
 // 一般查询
 // **********************************************************
 func query() {
-	// 根据主键查询第一条记录
-	u1 := new(User)
-	DB.Where("deleted_at = ?", "nil").First(u1)
-	fmt.Printf("第一条记录为: name:%s, age:%d\n", u1.Name, u1.Age)
+	// Find:查找符合条件的所有数据
+	// First:查找符合条件的第一条记录
+	// Last:查找符合条件的最后一条记录
+	// Tack:查询符合条件的一条记录(取哪条看引擎计划)
+	users := make([]User, 10) // 多条结果用切片承接
+	status := DB.Find(&users, "age > ?", 1)
+	err := status.Error
+	if err != nil {
+		if status.RecordNotFound() { // 判断错误是否是因为没有匹配到数据
+			fmt.Printf("未查询到相关数据\n")
+		} else {
+			fmt.Printf("查询语句出错, err: %v\n", err)
+		}
+	}
+	fmt.Println("符合条件的记录有:")
+	for _, u := range users {
+		fmt.Printf("name:%s, age:%d\n", u.Name, u.Age)
+	}
+
 	// 根据主键查询最后一条记录
 	u2 := new(User)
 	DB.Last(u2)
 	fmt.Printf("最后一条记录为: name:%s, age:%d\n", u2.Name, u2.Age)
-	// 随机获取一条记录
-	u3 := new(User)
-	DB.Take(u3)
-	fmt.Printf("随机获取一条记录为: name:%s, age:%d\n", u3.Name, u3.Age)
-	// 查询所有记录
-	users := make([]User, 2)
-	DB.Find(&users)
-	fmt.Println("列举所有记录")
-	for _, u := range users {
-		fmt.Printf("name:%s, age:%d\n", u.Name, u.Age)
-	}
+}
+
+// **********************************************************
+
+// 更改数据
+// **********************************************************
+func update() {
+
 }
 
 // **********************************************************
 
 func main() {
 	initDB("root", "123456", "zy.server", "3306", "go_test")
-	defer DB.Close()
-	creatTable()
+	// creatTable()
 	// insert("aa", 1)
 	// insert("bb", 2)
 	// insert("cc", 3)

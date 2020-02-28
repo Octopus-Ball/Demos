@@ -272,11 +272,13 @@ func makeMiddleware(r *gin.Engine) {
 	})
 }
 
-// cookie和session
+// cookie
 // cookie是解决HTTP协议无状态的方案之一
 // cookie实际上就是服务器保存在浏览器上的一段信息
 // 浏览器有了cookie之后，每次向服务器发起请求时都会同时将该信息发送给服务器
 // 服务器便可根据该信息判断发起请求方的身份
+// cookie缺点：
+// 不安全、明文、增加带宽消耗、可被禁用、cookie有上限
 func cookieAndSession(r *gin.Engine) {
 	r.GET("cookieTest", func(c *gin.Context) {
 		// 先查看客户端请求是否携带cookie
@@ -286,11 +288,11 @@ func cookieAndSession(r *gin.Engine) {
 			c.SetCookie(
 				"key_cookie",
 				"value_cookie",
-				10,          // cookie有效时间
-				"/",         // cookie所在目录
-				"127.0.0.1", // 域名
-				false,       // 是否只能通过https访问
-				true,        // 是否允许别人通过js获取自己cookie
+				10,          		// cookie有效时间
+				"/",         		// cookie所在目录
+				"127.0.0.1", 		// 域名
+				false,       		// 是否只能通过https访问
+				true,        		// 是否允许别人通过js获取自己cookie
 			)
 			c.String(200, "无cookie，设置cookie")
 		} else {
@@ -298,6 +300,18 @@ func cookieAndSession(r *gin.Engine) {
 		}
 	})
 }
+
+// session
+// session可以弥补cookie的不足
+// session必须依赖cookie才能使用(生成一个sessionID放到cookie传给客户端就行)
+
+// session中间件开发
+func sessionMiddleware() {
+	
+}
+
+
+
 
 func main() {
 	r := initGin()

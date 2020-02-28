@@ -1,0 +1,14 @@
+{
+    "sqltools.connections": [
+        {
+            "connectionTimeout": 5,
+            "database": "go_test",
+            "dialect": "MySQL",
+            "name": "go_test",
+            "password": "123456",
+            "port": 3306,
+            "server": "zy.server",
+            "username": "root"
+        }
+    ]
+}
