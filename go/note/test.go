@@ -1,10 +1,8 @@
 package main
 
+import "net"
 
-func Sum(set []int) int {
-	var result int
-	for _, num := range set {
-		result += num
-	}
-	return result
+func main() {
+	// 1.本地端口启动服务
+	listener, err := net.Listen
 }
