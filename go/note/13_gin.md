@@ -306,10 +306,6 @@ func cookieAndSession(r *gin.Engine) {
 // session可以弥补cookie的不足
 // session必须依赖cookie才能使用(生成一个sessionID放到cookie传给客户端就行)
 
-// session中间件开发
-func sessionMiddleware() {
-	
-}
 
 
 

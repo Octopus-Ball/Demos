@@ -115,7 +115,7 @@ func upload(r *gin.Engine) {
 	})
 }
 
-// 数据解析绑定
+// json数据解析绑定
 func data2struct(r *gin.Engine) {
 	// 建立接收数据的结构体
 	// 若绑定body里的json数据则声明json的tag

@@ -117,6 +117,24 @@ func query() {
 	u2 := new(User)
 	DB.Last(u2)
 	fmt.Printf("最后一条记录为: name:%s, age:%d\n", u2.Name, u2.Age)
+
+	// 根据主键ID查询一条数据
+	u3 := new(User)
+	DB.First(u3, 2)	// 找ID为2的数据
+	fmt.Printf("ID为2的数据为:%#v\n", u3)
+
+	// 以struct里的数据为条件来查询
+	u4 := User{Name: "cc"}
+	//	u4里找查询条件	结果填充到u4
+	DB.Where(&u4).Find(&u4)
+	fmt.Printf("名字为cc的数据为:%#v\n", u4)
+
+	// 以map里的数据为条件来查询
+	rstU := new(User)
+	u5 := map[string]interface{}{"name": "aa"}
+	DB.Where(u5).Find(rstU)
+	fmt.Printf("名字为aa的数据为:%#v\n", rstU)
+
 }
 
 // **********************************************************
@@ -124,17 +142,22 @@ func query() {
 // 更改数据
 // **********************************************************
 func update() {
-
+	u1 := new(User)
+	DB.Find(u1, "name = ?", "bb")
+	u1.Age += 100
+	// Save方法执行更新时将包含所有字段(即使这些字段未被修改)
+	DB.Save(u1)
 }
 
 // **********************************************************
 
 func main() {
 	initDB("root", "123456", "zy.server", "3306", "go_test")
-	// creatTable()
-	// insert("aa", 1)
-	// insert("bb", 2)
-	// insert("cc", 3)
-	// insert("dd", 4)
-	query()
+	creatTable()
+	insert("aa", 1)
+	insert("bb", 2)
+	insert("cc", 3)
+	insert("dd", 4)
+	// query()
+	// update()
 }

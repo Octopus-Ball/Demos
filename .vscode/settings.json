@@ -9,5 +9,9 @@
             "server": "zy.server",
             "username": "root"
         }
-    ]
+    ],
+    "python.pythonPath": "/usr/bin/python3",
+    "python.linting.pylintEnabled": false,
+    "python.linting.flake8Enabled": true,
+    "python.linting.enabled": true
 }
