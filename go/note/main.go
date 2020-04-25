@@ -1,20 +1,21 @@
-package main
-
 import (
-	"fmt"
-	"reflect"
-	"time"
+    "log"
+    "os"
+    "path/filepath"
+    "runtime/pprof"
 )
-
-func f(arr [5]int) (sl []int){
-	sl = arr[:]
-	return
-}
-
-func main() {
-	arr := [5]int{1,2,3,4,5}
-	rst := f(arr)
-	fmt.Println(rst)
-	fmt.Println(reflect.TypeOf(rst))
-	time.Sleep(time.Second * 20)
+// 进行CPU监控
+func CreateProfileFile() {
+    dir, err := os.Getwd()
+    if err != nil {
+        log.Fatalln("get current directory failed.", err)
+    }
+    
+    fileName := filepath.Join(dir, "pprof", "profile_file", "profile_file")
+    f, _ := os.Create(fileName)
+    // start to record CPU profile and write to file `f`
+    _ = pprof.StartCPUProfile(f)
+    // stop to record CPU profile
+    defer pprof.StopCPUProfile()
+    // TODO do something
 }
