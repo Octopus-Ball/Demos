@@ -1,0 +1,10 @@
+server:
+  port: 1060
+db:
+  driverName: mysql
+  host: zy.server
+  port: 3306
+  database: go_test
+  username: root
+  password: 123456
+  charset: utf8

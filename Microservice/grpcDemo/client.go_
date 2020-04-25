@@ -1,0 +1,81 @@
+package main
+
+import (
+	"fmt"
+	"io"
+
+	"golang.org/x/net/context"
+
+	"grpcDemo/proto"
+
+	"google.golang.org/grpc"
+)
+
+func main() {
+	// 连接
+	conn, err := grpc.Dial("127.0.0.1:8080", grpc.WithInsecure())
+	if err != nil {
+		fmt.Printf("连接异常:%s", err)
+	}
+	defer conn.Close()
+	// 实例化grpc客户端
+	client := proto.NewUserInfoServiceClient(conn)
+
+	GetNum_test(client)
+	GetNums_test(client)
+	PutNums_test(client)
+	LoopNums_test(client)
+}
+
+func GetNum_test(client proto.UserInfoServiceClient) {
+	fmt.Println("*************GetNum测试**************")
+	response, _ := client.GetNum(context.Background(), &proto.NumRequest{N: 5})
+	fmt.Println(response)
+	fmt.Println("***********GetNum测试完毕************")
+}
+
+func GetNums_test(client proto.UserInfoServiceClient) {
+	fmt.Println("*************GetNums测试**************")
+	stream, _ := client.GetNums(context.Background(), &proto.NumRequest{N: 5})
+	for {
+		response, err := stream.Recv()
+		if err != nil {
+			if err == io.EOF {
+				fmt.Println("接收完毕")
+			}
+			break
+		}
+		fmt.Printf("rsp=%d\n", response.N)
+	}
+	fmt.Println("***********GetNums测试完毕************")
+}
+
+func PutNums_test(client proto.UserInfoServiceClient) {
+	fmt.Println("*************PutNums测试**************")
+	stream, _ := client.PutNums(context.Background(), grpc.EmptyCallOption{})
+	for i := 0; i < 5; i++ {
+		stream.Send(&proto.NumRequest{N: int32(i)})
+	}
+	response, _ := stream.CloseAndRecv()
+	fmt.Printf("rsp=%d\n", response.N)
+	fmt.Println("***********PutNums测试完毕************")
+}
+
+func LoopNums_test(client proto.UserInfoServiceClient) {
+	fmt.Println("*************LoopNums测试**************")
+	stream, _ := client.LoopNums(context.Background(), grpc.EmptyCallOption{})
+	for i:=0; i<5; i++ {
+		stream.Send(&proto.NumRequest{N: int32(i)})
+	}
+	for {
+		response, err := stream.Recv()
+		if err != nil {
+			if err == io.EOF {
+				fmt.Println("接收完毕")
+			}
+			break
+		}
+		fmt.Printf("rsp=%d\n", response.N)
+	}
+	fmt.Println("***********LoopNums测试完毕**************")
+}

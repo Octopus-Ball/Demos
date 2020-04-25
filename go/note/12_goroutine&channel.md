@@ -3,7 +3,7 @@
 > Goroutine是Go中最基本的执行单元  
 > 每个Go程序至少有一个Goroutine  
 > 程序启动时的main函数本身就是一个Goroutine(它会自动创建)  
-## Coroutine与协程：
+## Goroutine与协程：
 > Goroutine可以理解为一种Go语言的协程  
 > 不同的是Go在runtime、系统调用等多方面对goroutine调度进行了封装和处理  
 > 即goroutine不完全是用户控制，一定程度上是由go运行时(runtime)管理  
@@ -14,6 +14,18 @@
 
 .  
 # channel：
+## 番外：
+> ### 流水线模型
+> > Go并发核心思路是关注数据流动  
+> > 将数据流动过程交给channel，数据处理环节交给goroutine  
+> > 从而形成流水线模型  
+> ### FAN模式：
+> > FAN模式可以让流水线模型更好的利用Golang并发  
+> > 但FAN模式不是万能的，有时甚至不如普通流水线  
+> ### FAN-OUT(任务分发):
+> > 多个goroutine从同一个通道读数据，直到该通道关闭  
+> ### FAN-IN(任务收集):
+> > 1个goroutine从多个通道读取数据，直到这些通道关闭  
 ## 引言：
 > 协程与协程之间需要交换数据才能体现并发执行的意义  
 > 若使用共享内存进行数据交换，为避免竟态问题，必须对互斥量加锁  
@@ -247,3 +259,10 @@ func main() {
 	fmt.Printf("生产面包%d个\n", sum)
 }  
 ```
+---
+
+# channel超时机制：
+## 简介：
+> Go语言没有提供直接的超时机制  
+> 使用channel通道中的select关键字来模拟超时机制  
+> time.After(时长)

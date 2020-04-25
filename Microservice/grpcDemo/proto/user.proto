@@ -1,0 +1,27 @@
+// 指明版本为proto3
+syntax = "proto3";
+// 指定包名
+package proto;
+
+// 请求消息
+message NumRequest {
+    int32 n = 1;
+}
+
+// 响应消息
+message NumResponse {
+    int32 n = 1;
+}
+
+// 定义服务
+service UserInfoService {
+    // 定义方法
+    // 单一请求，单一应答
+    rpc GetNum (NumRequest) returns (NumResponse) {}
+    // 服务端流式应答(可用于下载)
+    rpc GetNums (NumRequest) returns (stream NumResponse) {}
+    // 客户端流式请求(可用于上传)
+    rpc PutNums (stream NumRequest) returns (NumResponse) {}
+    // 双向流式请求应答
+    rpc LoopNums(stream NumRequest) returns (stream NumResponse) {}
+}
