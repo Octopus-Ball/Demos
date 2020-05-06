@@ -1,0 +1,28 @@
+{
+    "addr": "127.0.0.1:9071",
+    "web_addr": "127.0.0.1:9070",
+    "etcd": {
+      "endpoints": [
+        "127.0.0.1:2379"
+      ],
+      "dial_timeout": 5
+    },
+    "mysql": {
+      "addr": "127.0.0.1:3306",
+      "user": "root",
+      "password": "123456",
+      "db": "game_conf"
+    },
+    "app": {
+      "mysql": {
+        "addr": "127.0.0.1:3306",
+        "user": "root",
+        "password": "123456",
+        "db": "game_conf"
+      }
+    },
+    "micro": {
+      "name": "confCenter",
+      "version": "1"
+    }
+  }
