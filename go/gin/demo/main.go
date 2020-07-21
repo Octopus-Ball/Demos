@@ -249,12 +249,32 @@ func useMiddlewareInGroup() {
 	})
 }
 
+
 // 自定义中间件
 // Gin中的中间件必须是一个gin.HandlerFunc类型
 // 个人认为中间件和普通的路由处理函数没什么区别
 // 声明一个路由后，本来就可以传入多个处理函数,中间件不过是被默认传入到其他处理函数的前面
+
+// 定义中间件的第一种形式：
+func middleware1(c *gin.Context) {
+	// 中间件逻辑
+}
+// 则使用该中间件时为：
+// r.Use(middleware1)
+
+// 定义中间件的第二种形式：
+func middleware2() gin.HandlerFunc {
+	// 自定义逻辑
+	return func(c *gin.Context) {
+		// 中间件逻辑
+	}
+}
+// 则使用中间件时为：
+// r.Use(middleware2())
+
+
+// 自定义一个统计请求耗时的中间件
 func makeMiddleware(r *gin.Engine) {
-	// 自定义一个统计请求耗时的中间件
 	myMiddleware := func(c *gin.Context) {
 		// 在中间件里可以调用
 		// c.Next()		用来调用后续路由处理函数
@@ -270,6 +290,13 @@ func makeMiddleware(r *gin.Engine) {
 	r.GET("/makeMiddleware", func(c *gin.Context) {
 		c.String(302, "ok")
 	})
+}
+
+// gin.Context数据传递
+// gin.Context中提供了Set、Get函数用来存储和提取数据
+func xx(c *gin.Context) {
+	c.Set("name", "zy")		// Set方法存的值类型为interface{}
+	name := c.GetString("name")
 }
 
 // cookie
